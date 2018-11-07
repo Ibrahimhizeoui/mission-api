@@ -1,8 +1,9 @@
-var express = require('express');
-var app = express();
-var routes = require('./api/routes/routes.js');
+const express = require('express');
+
+const app = express();
 const bodyParser = require('body-parser');
+const routes = require('./api/routes/routes.js');
 
 app.use(bodyParser.json());
-app.use('/api', routes)
+app.use('/api/v1', routes);
 app.listen(3000);

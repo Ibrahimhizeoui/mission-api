@@ -1,12 +1,13 @@
-var missions = require('./MissionRoutes');
-var express = require('express');
-var globalRoute = express.Router();
+const express = require('express');
+const missions = require('./missions-routes')();
 
-	// Endpoint for misson model
-    globalRoute.get('/missions', missions.getMissions);
-    globalRoute.get('/missions/:id', missions.getOneMission);
-    globalRoute.post('/missions', missions.createMission);
-    globalRoute.put('/missions/:id', missions.updateMission);
-    globalRoute.delete('/missions/:id', missions.deleteMission);    
+const globalRouter = express.Router();
 
-module.exports = globalRoute;
+// Endpoint for misson model
+globalRouter.get('/missions', missions.getMissions);
+globalRouter.get('/missions/:id', missions.getOneMission);
+globalRouter.post('/missions', missions.createMission);
+globalRouter.put('/missions/:id', missions.updateMission);
+globalRouter.delete('/missions/:id', missions.deleteMission);
+
+module.exports = globalRouter;
