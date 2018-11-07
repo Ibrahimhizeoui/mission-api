@@ -13,10 +13,6 @@ pipeline {
 
   environment {
     ENVIRONMENT = 'dev'
-    BUILD_START_TIMESTAMP = sh(script: "date +%s", returnStdout: true)
-    AWS_DEFAULT_REGION = 'eu-central-1'
-    AWS_ACCESS_KEY_ID = credentials('mission-test-aws-key-id')
-    AWS_SECRET_ACCESS_KEY = credentials('mission-test-aws-key-secret')
   }
 
   stages {
