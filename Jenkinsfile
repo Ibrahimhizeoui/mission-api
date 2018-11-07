@@ -20,7 +20,8 @@ pipeline {
     
     stage("Run all tests") {
       steps {
-        sh 'sudo ./scripts/run-all-tests.sh'
+        sh 'npm run lint'
+        sh 'npm test'
       }
     }
   }
