@@ -20,7 +20,7 @@ pipeline {
     
     stage("Run all tests") {
       steps {
-        sh './scripts/run-all-tests.sh'
+        sh 'sudo ./scripts/run-all-tests.sh'
       }
     }
   }
