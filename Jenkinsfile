@@ -14,12 +14,9 @@ pipeline {
   environment {
     ENVIRONMENT = 'dev'
     BUILD_START_TIMESTAMP = sh(script: "date +%s", returnStdout: true)
-    AWS_ACCOUNT_ID = credentials('spe-prod-aws-account-id')
     AWS_DEFAULT_REGION = 'eu-central-1'
-    AWS_ACCESS_KEY_ID = credentials('spe-prod-aws-key-id')
-    AWS_SECRET_ACCESS_KEY = credentials('spe-prod-aws-key-secret')
-    ADYEN_CHECKOUT_API_KEY = credentials('spe-prod-adyen-api-key')
-    SLACK_TOKEN = credentials('spe-slack-token')
+    AWS_ACCESS_KEY_ID = credentials('mission-test-aws-key-id')
+    AWS_SECRET_ACCESS_KEY = credentials('mission-test-aws-key-secret')
   }
 
   stages {
