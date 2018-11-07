@@ -20,7 +20,7 @@ pipeline {
     
     stage("Run all tests") {
       steps {
-        sh 'docker-compose run --rm app -c "./scripts/run-all-tests.sh"'
+        sh './scripts/run-all-tests.sh'
       }
     }
   }
