@@ -4,7 +4,9 @@ def cloudWatch = null
 def slack = null
 
 pipeline {
-  agent any
+  agent {
+    label "docker"
+  }
 
   options {
     timestamps()
