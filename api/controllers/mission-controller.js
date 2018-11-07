@@ -1,8 +1,9 @@
 const { MongoClient } = require('mongodb');
 const config = require('../../config.json');
+require('dotenv').config();
 
 let dao;
-const url = 'mongodb://mongo:27017';
+const url = `mongodb://${process.env.dbHost}:${process.env.dbPort}`;
 
 module.exports = () => ({
   getMissions: (res) => {
