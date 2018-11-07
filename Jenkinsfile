@@ -5,7 +5,7 @@ def slack = null
 
 pipeline {
   agent {
-    label 'docker&&docker_compose&&aws_cli'
+    label 'docker'
   }
 
   options {
@@ -34,7 +34,7 @@ pipeline {
     
     stage("Run all tests") {
       steps {
-        sh 'docker-compose run --rm spe-application -c "./scripts/run-all-tests.sh"'
+        sh 'docker-compose run --rm mession-app -c "./scripts/run-all-tests.sh"'
       }
     }
   }
