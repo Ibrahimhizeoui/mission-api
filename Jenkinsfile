@@ -16,12 +16,16 @@ pipeline {
   }
 
   stages {
-    
+    stage("Initialize") {
+      steps {
+        sh "docker-compose build"
+        sh "docker-compose down"
+      }
+    }
     
     stage("Run all tests") {
       steps {
-        sh 'npm run lint'
-        sh 'npm test'
+        sh 'docker-compose run --rm app -c "./scripts/run-all-tests.sh"'
       }
     }
   }
