@@ -3,7 +3,7 @@
 set -e
 
 echo ">> Checking linting"
-npm run lint
+npm run lint ./api --fix
 
 echo ">> Checking that docs can be generated"
 npm test
