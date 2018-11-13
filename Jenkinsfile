@@ -2,7 +2,7 @@
 
 pipeline {
   agent {
-        docker { image 'node:8-alpine' }
+        docker { image 'docker' }
     }
   options {
     timestamps()
