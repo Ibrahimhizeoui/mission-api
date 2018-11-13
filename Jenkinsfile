@@ -1,9 +1,7 @@
 #!groovy
 
 pipeline {
-  agent {
-    label 'docker&&docker_compose&&aws_cli'
-  }
+  agent docker
 
   options {
     timestamps()
