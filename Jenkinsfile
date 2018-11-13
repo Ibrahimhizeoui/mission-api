@@ -1,9 +1,7 @@
 #!groovy
 
 pipeline {
-  agent {
-    label "any"
-  }
+  agent none
 
   options {
     timestamps()
