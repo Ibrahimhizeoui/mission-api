@@ -2,8 +2,8 @@
 
 pipeline {
   agent {
-        docker 'node'
-    }
+    label 'docker&&docker_compose&&aws_cli'
+  }
 
   options {
     timestamps()
