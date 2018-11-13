@@ -15,8 +15,8 @@ pipeline {
   stages {
     stage("Initialize") {
       steps {
-        sh "docker-compose pull"
-        sh "docker-compose down"
+        sh 'docker-compose pull'
+        sh 'docker-compose down'
       }
     }
     
