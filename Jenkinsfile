@@ -1,8 +1,9 @@
 #!groovy
 
 pipeline {
-  agent : 'docker'
-
+  agent {
+        docker { image 'node:8-alpine' }
+    }
   options {
     timestamps()
   }
