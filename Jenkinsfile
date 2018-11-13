@@ -1,11 +1,8 @@
 #!groovy
 
-def cloudWatch = null
-def slack = null
-
 pipeline {
   agent {
-    label "docker"
+    label "any"
   }
 
   options {
