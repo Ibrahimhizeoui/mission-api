@@ -1,30 +1,12 @@
-#!groovy
-
 pipeline {
-  agent {
-        docker { image 'docker' }
+    agent {
+        docker { image 'node:7-alpine' }
     }
-  options {
-    timestamps()
-  }
-  
-
-  environment {
-    ENVIRONMENT = 'dev'
-  }
-
-  stages {
-    stage("Initialize") {
-      steps {
-        sh 'docker-compose pull'
-        sh 'docker-compose down'
-      }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+            }
+        }
     }
-    
-    stage("Run all tests") {
-      steps {
-        sh 'docker-compose run --rm app -c "./scripts/run-all-tests.sh"'
-      }
-    }
-  }
 }
