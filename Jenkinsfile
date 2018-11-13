@@ -1,7 +1,9 @@
 #!groovy
 
 pipeline {
-  agent none
+  agent {
+        docker 'node'
+    }
 
   options {
     timestamps()
