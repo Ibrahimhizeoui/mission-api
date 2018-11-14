@@ -55,7 +55,116 @@ class ObjectNotFound extends BaseError {
   }
 }
 
+/**
+ * Error for when a jsonschema was found to be invalid, contains the details of
+ * the validation.
+ */
+class InvalidJSONSchema extends BaseError {
+  /**
+     * Creates a new error along with the jsonschema field errors.
+     *
+     * @param {string} title - Title of type.
+     * @param {Array<object>} fieldErrors - list of jsonschema errors.
+     */
+  constructor(title, fieldErrors, ...rest) {
+    super(
+      400,
+      'json-schema-validation',
+      InvalidJSONSchema.simplifyFieldErrors(fieldErrors),
+      `Validating input by jsonschema ${title} failed`,
+      ...rest,
+    );
+
+    this.title = title;
+  }
+
+  /**
+     * Helper that simplifies field errors from a jsonschema validation result.
+     * Only keeps the most relevant information.
+     *
+     * @param {Array<object>} fieldErrors - Field errors to simplify.
+     * @returns {Array<object>} - Simplified errors.
+     */
+  static simplifyFieldErrors(fieldErrors) {
+    return _.map(fieldErrors, err => ({
+      property: err.property.replace('instance.', ''),
+      message: err.message,
+    }));
+  }
+}
+
+/**
+   * Error for when a jsonschema to return was found to be invalid, contains the details of
+   * the validation.
+   */
+class InvalidReturnJSONSchema extends BaseError {
+  /**
+     * Creates a new error along with the jsonschema field errors.
+     *
+     * @param {string} title - Title of type.
+     * @param {Array<object>} fieldErrors - list of jsonschema errors.
+     */
+  constructor(title, fieldErrors, ...rest) {
+    super(
+      500,
+      'json-schema-validation',
+      InvalidJSONSchema.simplifyFieldErrors(fieldErrors),
+      `Validating output by jsonschema ${title} failed`,
+      ...rest,
+    );
+  }
+}
+
+/**
+   * Error for when a jsonschema passed to input filter was found to be invalid,
+   * contains the details of the validation.
+   */
+class InvalidFilterJSONSchema extends BaseError {
+  /**
+     * Creates a new error along with the jsonschema field errors.
+     *
+     * @param {string} title - Title of type.
+     * @param {Array<object>} fieldErrors - list of jsonschema errors.
+     */
+  constructor(title, fieldErrors, ...rest) {
+    super(
+      400,
+      'json-schema-validation',
+      InvalidJSONSchema.simplifyFieldErrors(fieldErrors),
+      `Validating URL parametrs by ${title} failed`,
+      ...rest,
+    );
+  }
+}
+
+/**
+   * Error for when a jsonschema sended via HTTP POST and PATCH was found to be invalid,
+   * contains the details of the validation.
+   */
+class InvalidInputJSONSchema extends BaseError {
+  /**
+     * Creates a new error along with the jsonschema field errors.
+     *
+     * @param {string} title - Title of type.
+     * @param {Array<object>} fieldErrors - list of jsonschema errors.
+     */
+  constructor(title, fieldErrors, ...rest) {
+    super(
+      400,
+      'json-schema-validation',
+      InvalidJSONSchema.simplifyFieldErrors(fieldErrors),
+      `Validating input by jsonschema ${title} failed`,
+      ...rest,
+    );
+  }
+}
+
+
 module.exports = {
   BaseError,
   ObjectNotFound,
+  InvalidJSONSchema,
+  InvalidInputJSONSchema,
+  InvalidReturnJSONSchema,
+  InvalidFilterJSONSchema,
 };

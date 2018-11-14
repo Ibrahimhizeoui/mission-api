@@ -8,7 +8,7 @@ missionsRouter.get('/', (req, res) => {
   missionController.getMissions(res);
 });
 missionsRouter.get('/:id', (req, res) => {
-  missionController.getOneMission(res);
+  missionController.getOneMission(req, res);
 });
 missionsRouter.post('', (req, res) => {
   missionController.createMission(res, req);
