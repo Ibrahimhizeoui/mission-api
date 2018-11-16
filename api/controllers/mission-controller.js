@@ -1,69 +1,59 @@
 const _ = require('lodash');
-const { MongoClient } = require('mongodb');
-const config = require('../../config.json');
+const mongoose = require('mongoose');
+const uuidv4 = require('uuid/v4');
+
 const { ObjectNotFound } = require('../common/errors');
 const ResponseBuilder = require('../common/response-builder');
 const { MissionRestApiMapper } = require('../mapper/rest/mission');
 
+const MissionSchema = require('../models/Mession');
+
+const Mission = mongoose.model('Mission', MissionSchema);
 
 require('dotenv').config();
 
-let dao;
-const url = `mongodb://${process.env.dbHost}:${process.env.dbPort}`;
 
+const url = `mongodb://${process.env.dbHost}:${process.env.dbPort}`;
+mongoose.connect(url);
 module.exports = () => ({
   getMissions: (res) => {
-    MongoClient.connect(url, (err, db) => {
-      if (err) throw err;
-      dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').find({}).toArray((collectionErr, result) => {
-        if (collectionErr) throw collectionErr;
-        // return ResponseBuilder.ok(MissionRestApiMapper.map(result));
-        res.json(ResponseBuilder.ok(MissionRestApiMapper.map(result)));
-      });
+    Mission.find({}, (err, docs) => {
+      if (err) throw res.json(err);
+      res.json(ResponseBuilder.ok(MissionRestApiMapper.map(docs)));
     });
   },
   getOneMission: (req, res) => {
-    const { id } = req.params;
-    MongoClient.connect(url, (err, db) => {
-      if (err) throw err;
-      dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').findOne({ id }, (collectionErr, result) => {
-        if (collectionErr) throw collectionErr;
-        if (_.isEmpty(result)) throw new ObjectNotFound('Mission by uuid', id);
-        res.json(result);
-      });
+    const { uuid } = req.params;
+    Mission.findOne({ uuid }, (err, docs) => {
+      if (err) throw res.json(err);
+      if (_.isEmpty(docs)) res.json(new ObjectNotFound('UUID', `Object with ${uuid} not found`));
+      res.json(ResponseBuilder.ok(MissionRestApiMapper.map(docs)));
     });
   },
   createMission: (res, req) => {
-    MongoClient.connect(url, (err, db) => {
-      if (err) throw err;
-      dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').insertOne(req.body, (collectionErr, result) => {
-        if (collectionErr) throw collectionErr;
-        res.json(result);
-      });
+    const mission = req.body;
+    mission.uuid = uuidv4();
+    Mission.create(req.body, (err, docs) => {
+      if (err) throw res.json(err);
+      res.json(ResponseBuilder.created(MissionRestApiMapper.map(docs)));
     });
   },
   updateMission: (req, res) => {
-    MongoClient.connect(url, (err, db) => {
-      if (err) throw err;
-      dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').updateOne({ title: 'cccopen' }, { $set: req.body }, (collectionErr, result) => {
-        if (collectionErr) throw collectionErr;
-        res.json(result);
+    const { uuid } = req.params;
+    Mission.findOne({ uuid }, (err, docs) => {
+      if (err) res.json(err);
+      if (_.isEmpty(docs)) res.json(new ObjectNotFound('UUID', `Object with ${uuid} not found`));
+      Mission.updateOne(req.body, (updateErr, updatedDocs) => {
+        if (updateErr) res.json(updateErr);
+        res.json(ResponseBuilder.ok(MissionRestApiMapper.map(updatedDocs)));
       });
     });
   },
   deleteMission: (req, res) => {
-    MongoClient.connect(url, (err, db) => {
-      if (err) throw err;
-      dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').deleteOne({ title: 'xx' /* id: req.params.id */ }, (collectionErr, result) => {
-        if (collectionErr) throw collectionErr;
-        res.json(result);
-      });
+    const { id } = req.params;
+    Mission.Mission.deleteOne({ id }, (err, docs) => {
+      if (err) throw res.json(err);
+      res.json(ResponseBuilder.deleted(MissionRestApiMapper.map(docs)));
     });
   },
-
 });

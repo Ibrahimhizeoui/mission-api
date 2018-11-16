@@ -7,16 +7,16 @@ const missionsRouter = express.Router();
 missionsRouter.get('/', (req, res) => {
   missionController.getMissions(res);
 });
-missionsRouter.get('/:id', (req, res) => {
+missionsRouter.get('/:uuid', (req, res) => {
   missionController.getOneMission(req, res);
 });
 missionsRouter.post('', (req, res) => {
   missionController.createMission(res, req);
 });
-missionsRouter.put('/:id', (req, res) => {
+missionsRouter.put('/:uuid', (req, res) => {
   missionController.updateMission(req, res);
 });
-missionsRouter.delete('/:id', (req, res) => {
+missionsRouter.delete('/:uuid', (req, res) => {
   missionController.deleteMission(req, res);
 });
 
