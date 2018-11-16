@@ -11,4 +11,4 @@ const swaggerDocument = YAML.load('./swagger.yml');
 app.use(bodyParser.json());
 app.use('/api/v1', routes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.listen(process.env.port, () => { console.log(`>>>>>>>>>> Server running on port ${process.env.port}`); });
+app.listen(process.env.port, () => { console.log(`>>>>>>>>>> ${new Date().toISOString()} Server running on port ${process.env.port}`); });

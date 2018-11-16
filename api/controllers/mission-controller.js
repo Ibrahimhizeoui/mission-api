@@ -1,5 +1,11 @@
+const _ = require('lodash');
 const { MongoClient } = require('mongodb');
 const config = require('../../config.json');
+const { ObjectNotFound } = require('../common/errors');
+const ResponseBuilder = require('../common/response-builder');
+const { MissionRestApiMapper } = require('../mapper/rest/mission');
+
+
 require('dotenv').config();
 
 let dao;
@@ -12,16 +18,19 @@ module.exports = () => ({
       dao = db.db(config.dbConfig.dbName);
       dao.collection('missions').find({}).toArray((collectionErr, result) => {
         if (collectionErr) throw collectionErr;
-        res.json(result);
+        // return ResponseBuilder.ok(MissionRestApiMapper.map(result));
+        res.json(ResponseBuilder.ok(MissionRestApiMapper.map(result)));
       });
     });
   },
-  getOneMission: (res) => {
+  getOneMission: (req, res) => {
+    const { id } = req.params;
     MongoClient.connect(url, (err, db) => {
       if (err) throw err;
       dao = db.db(config.dbConfig.dbName);
-      dao.collection('missions').findOne({}, (collectionErr, result) => {
+      dao.collection('missions').findOne({ id }, (collectionErr, result) => {
         if (collectionErr) throw collectionErr;
+        if (_.isEmpty(result)) throw new ObjectNotFound('Mission by uuid', id);
         res.json(result);
       });
     });
