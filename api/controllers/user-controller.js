@@ -25,4 +25,8 @@ module.exports = () => ({
     const token = await userService.saveToken(fetchedUser.uuid);
     res.json(ResponseBuilder.ok({ auth: true, token }));
   },
+  tokens: async () => {
+    const deleted = await userService.deleteExpiredToken();
+    return deleted;
+  },
 });

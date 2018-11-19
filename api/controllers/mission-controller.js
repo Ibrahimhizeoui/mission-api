@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4');
 
 const ResponseBuilder = require('../common/response-builder');
 const { MissionRestApiMapper } = require('../mapper/rest/mission');
-const missionService = require('../sevice/mission');
+const missionService = require('../sevice/mission')();
 
 module.exports = () => ({
   getMissions: async (res) => {

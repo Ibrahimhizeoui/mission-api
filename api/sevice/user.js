@@ -24,9 +24,11 @@ module.exports = () => ({
     let savedToken = null;
     try {
       const token = jwt.sign({ uuid }, process.env.secret, {
-        expiresIn: '1h',
+        expiresIn: '5m',
       });
-      savedToken = await Token.create({ uuid, token, expired_at: date.addHours(new Date(), +2) });
+      savedToken = await Token.create(
+        { uuid, token, expired_at: date.addMinutes(new Date(), +65) },
+      );
     } catch (err) {
       throw new DatabaseSaveOperationError(`Cannot save token due to error: ${err}`);
     }
@@ -40,7 +42,7 @@ module.exports = () => ({
     try {
       decoded = jwt.verify(token, process.env.secret);
     } catch (err) {
-      throw new AuthenticationFailed('Failed to authenticate token.');
+      throw new AuthenticationFailed(`Failed to authenticate token due to error: ${err}`);
     }
     return decoded.uuid;
   },
@@ -52,5 +54,14 @@ module.exports = () => ({
       throw new ObjectNotFound('User', 'error login');
     }
     return user;
+  },
+  deleteExpiredToken: async () => {
+    let tokens = null;
+    try {
+      tokens = Token.deleteMany({ expired_at: { $lte: new Date() } });
+    } catch (err) {
+      throw new DatabaseSaveOperationError(`Cannot save token due to error: ${err}`);
+    }
+    return tokens;
   },
 });
