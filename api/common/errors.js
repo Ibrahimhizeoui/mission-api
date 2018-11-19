@@ -159,6 +159,61 @@ class InvalidInputJSONSchema extends BaseError {
   }
 }
 
+/**
+ * Represents the occurance of an error when there is problem with saving data into database.
+ *
+ */
+class DatabaseSaveOperationError extends BaseError {
+  /**
+   * Creates a new error with given message.
+   */
+  constructor(...rest) {
+    super(500, 'database-save-operation-failed', null, ...rest);
+  }
+}
+
+/**
+ * Error for when a user tried to authenticate against the API but the
+ * authentication failed due to invalid credentials.
+ */
+class AuthenticationFailed extends BaseError {
+  /**
+   * Creates a new error with the regular arguments.
+   */
+  constructor(...rest) {
+    super(401, 'authentication-failed', null, ...rest);
+  }
+}
+
+class AccessTokenExpired extends BaseError {
+  constructor(...rest) {
+    super(401, 'access-token-expired', null, ...rest);
+  }
+}
+
+/**
+ * Error for when a consumer tried to perform an action that the consumer was
+ * not allowed to perform.
+ */
+class PermissionDenied extends BaseError {
+  /**
+   * Creates an error that contains information about the action a consumer
+   * tried to perform on a resource.
+   *
+   * @param {string} action - Action that was going to be performed.
+   * @param {string} resource - Resource that was going to be affected.
+   */
+  constructor(action, resource, ...rest) {
+    const details = [
+      {
+        property: resource,
+        message: `${action} was denied on resource`,
+      },
+    ];
+
+    super(403, 'permission-denied', details, ...rest);
+  }
+}
 
 module.exports = {
   BaseError,
@@ -167,4 +222,8 @@ module.exports = {
   InvalidInputJSONSchema,
   InvalidReturnJSONSchema,
   InvalidFilterJSONSchema,
+  DatabaseSaveOperationError,
+  AuthenticationFailed,
+  AccessTokenExpired,
+  PermissionDenied,
 };

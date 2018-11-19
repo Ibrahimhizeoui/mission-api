@@ -1,59 +1,35 @@
-const _ = require('lodash');
-const mongoose = require('mongoose');
 const uuidv4 = require('uuid/v4');
 
-const { ObjectNotFound } = require('../common/errors');
 const ResponseBuilder = require('../common/response-builder');
 const { MissionRestApiMapper } = require('../mapper/rest/mission');
+const missionService = require('../sevice/mission')();
 
-const MissionSchema = require('../models/Mession');
-
-const Mission = mongoose.model('Mission', MissionSchema);
-
-require('dotenv').config();
-
-
-const url = `mongodb://${process.env.dbHost}:${process.env.dbPort}`;
-mongoose.connect(url);
 module.exports = () => ({
-  getMissions: (res) => {
-    Mission.find({}, (err, docs) => {
-      if (err) throw res.json(err);
-      res.json(ResponseBuilder.ok(MissionRestApiMapper.map(docs)));
-    });
+  getMissions: async (res) => {
+    const missions = await missionService.findAll();
+    res.json(ResponseBuilder.ok(MissionRestApiMapper.map(missions)));
   },
-  getOneMission: (req, res) => {
+  getOneMission: async (req, res) => {
     const { uuid } = req.params;
-    Mission.findOne({ uuid }, (err, docs) => {
-      if (err) throw res.json(err);
-      if (_.isEmpty(docs)) res.json(new ObjectNotFound('UUID', `Object with ${uuid} not found`));
-      res.json(ResponseBuilder.ok(MissionRestApiMapper.map(docs)));
-    });
+    const mission = await missionService.findOneByuuid(uuid);
+    res.json(ResponseBuilder.ok(MissionRestApiMapper.map(mission)));
   },
-  createMission: (res, req) => {
+  createMission: async (res, req) => {
     const mission = req.body;
     mission.uuid = uuidv4();
-    Mission.create(req.body, (err, docs) => {
-      if (err) throw res.json(err);
-      res.json(ResponseBuilder.created(MissionRestApiMapper.map(docs)));
-    });
+    const savedMission = await missionService.save();
+    res.json(ResponseBuilder.created(MissionRestApiMapper.map(savedMission)));
   },
-  updateMission: (req, res) => {
+  updateMission: async (req, res) => {
     const { uuid } = req.params;
-    Mission.findOne({ uuid }, (err, docs) => {
-      if (err) res.json(err);
-      if (_.isEmpty(docs)) res.json(new ObjectNotFound('UUID', `Object with ${uuid} not found`));
-      Mission.updateOne(req.body, (updateErr, updatedDocs) => {
-        if (updateErr) res.json(updateErr);
-        res.json(ResponseBuilder.ok(MissionRestApiMapper.map(updatedDocs)));
-      });
-    });
+    const mission = await missionService.findOneByuuid(uuid);
+    const updatedMission = await missionService.update(mission);
+    res.json(ResponseBuilder.ok(MissionRestApiMapper.map(updatedMission)));
   },
-  deleteMission: (req, res) => {
-    const { id } = req.params;
-    Mission.Mission.deleteOne({ id }, (err, docs) => {
-      if (err) throw res.json(err);
-      res.json(ResponseBuilder.deleted(MissionRestApiMapper.map(docs)));
-    });
+  deleteMission: async (req, res) => {
+    const { uuid } = req.params;
+    const mission = await missionService.findOneByuuid(uuid);
+    const deletedMission = await missionService.delete(mission.id);
+    res.json(ResponseBuilder.deleted(MissionRestApiMapper.map(deletedMission)));
   },
 });
