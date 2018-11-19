@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
+require('dotenv').config();
 
 const app = express();
 const bodyParser = require('body-parser');
