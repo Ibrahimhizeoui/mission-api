@@ -87,7 +87,7 @@ class InvalidJSONSchema extends BaseError {
      */
   static simplifyFieldErrors(fieldErrors) {
     return _.map(fieldErrors, err => ({
-      property: err.property.replace('instance.', ''),
+      property: err.name,
       message: err.message,
     }));
   }

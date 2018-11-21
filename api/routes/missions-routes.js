@@ -5,7 +5,7 @@ const missionsRouter = express.Router();
 
 // Endpoint for misson model
 missionsRouter.get('', (req, res) => {
-  missionController.getMissions(res);
+  missionController.getMissions(req, res);
 });
 missionsRouter.get('/:uuid', (req, res) => {
   missionController.getOneMission(req, res);

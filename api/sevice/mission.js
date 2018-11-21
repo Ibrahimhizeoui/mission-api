@@ -1,57 +1,71 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const MissionSchema = require('../models/mession');
-const { ObjectNotFound, DatabaseSaveOperationError } = require('../common/errors');
+const { ObjectNotFound, DatabaseSaveOperationError, InvalidJSONSchema } = require('../common/errors');
 
 const Mission = mongoose.model('Mission', MissionSchema);
 
-const url = `mongodb://${process.env.dbHost}:${process.env.dbPort}`;
-mongoose.connect(url);
-
-module.exports = () => ({
-  findAll: async () => {
+module.exports = () => {
+  const findbyfilter = async (where) => {
     let missions = null;
     try {
-      missions = await Mission.find({});
+      missions = await Mission.find(where);
     } catch (err) {
-      throw new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
+      return new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
     }
     return missions;
-  },
-  findOneByUuid: async (uuid) => {
-    let mission = null;
+  };
+  const findOneByFilter = (where) => {
+    let mission = {};
     try {
-      mission = Mission.findOne({ uuid });
-      if (_.isEmpty(mission)) throw new ObjectNotFound('UUID', `Object with ${uuid} not found`);
+      mission = Mission.findOne(where);
     } catch (err) {
-      throw new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
+      return DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
     }
-  },
-  save: async (mission) => {
-    let savedMission = null;
-    try {
-      savedMission = await Mission.create({ mission });
-    } catch (err) {
-      throw new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
-    }
-    return savedMission;
-  },
-  update: async (mission) => {
-    let updatedMission = null;
-    try {
-      updatedMission = await Mission.updateOne({ mission });
-    } catch (err) {
-      throw new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
-    }
-    return updatedMission;
-  },
-  delete: async (id) => {
-    let deletedMission = null;
-    try {
-      deletedMission = await Mission.deleteOne({ id });
-    } catch (err) {
-      throw new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
-    }
-    return deletedMission;
-  },
-});
+    return mission;
+  };
+  return {
+    findAll: async (userUuid) => {
+      const missions = await findbyfilter({ user: userUuid });
+      if (_.isEmpty(missions)) return new ObjectNotFound('UUID', `Object with ${userUuid} not found`);
+      return missions;
+    },
+    findOneByUuid: async (uuid, userUuid) => {
+      const mission = await findOneByFilter({ uuid, user: userUuid });
+      if (_.isEmpty(mission)) return new ObjectNotFound('UUID', `Object with ${uuid} not found`);
+      return mission;
+    },
+    save: async (mission) => {
+      let savedMission = null;
+      const MissionTosave = new Mission(mission);
+      const ValidationError = MissionTosave.validateSync();
+      if (!_.isEmpty(ValidationError)) {
+        return new InvalidJSONSchema('Validation error', ValidationError.errors);
+      }
+      try {
+        savedMission = await MissionTosave.save();
+      } catch (err) {
+        return new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
+      }
+      return savedMission;
+    },
+    update: async (mission) => {
+      let updatedMission = null;
+      try {
+        updatedMission = await Mission.updateOne({ mission });
+      } catch (err) {
+        return new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
+      }
+      return updatedMission;
+    },
+    delete: async (id) => {
+      let deletedMission = null;
+      try {
+        deletedMission = await Mission.deleteOne({ id });
+      } catch (err) {
+        return new DatabaseSaveOperationError(`Cannot save mission due to error: ${err}`);
+      }
+      return deletedMission;
+    },
+  };
+};
