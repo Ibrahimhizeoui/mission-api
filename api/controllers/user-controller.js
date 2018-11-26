@@ -21,7 +21,6 @@ module.exports = () => ({
   login: async (req, res) => {
     const user = req.body;
     const fetchedUser = await userService.getOneByEmail(user.email);
-    console.log(fetchedUser);
     if (fetchedUser instanceof ObjectNotFound) {
       res.status(404).send(fetchedUser);
     }

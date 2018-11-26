@@ -4,7 +4,7 @@
   "description": "simpel service",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./test/**",
+    "test": "./node_modules/mocha/bin/mocha ./test/**/*",
     "start": "node index.js",
     "lint": "eslint ./api --fix",
     "behaviour-test": "cucumber-js"
